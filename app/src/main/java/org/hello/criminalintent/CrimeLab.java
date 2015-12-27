@@ -48,8 +48,12 @@ public class CrimeLab {
 
     // chalenge: Efficient RecycleView reloading
     public static int getIndex(Crime crime) {
-        List<Crime> crimes = sCrimeLab.getCrimes();
         UUID searchedId = crime.getId();
+        return getIndex(searchedId);
+    }
+
+    public static int getIndex(UUID searchedId) {
+        List<Crime> crimes = sCrimeLab.getCrimes();
         for(int index = 0; index < crimes.size(); index++) {
             if(searchedId.equals(crimes.get(index).getId()))
                 return index;

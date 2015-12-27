@@ -94,7 +94,8 @@ public class CrimeListFragment extends Fragment {
         public void onClick(View v) {
             // challenge: Efficient RecycleView reloading
             mCrimeIndex = CrimeLab.getIndex(mCrime); // find the clicked item
-            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+//            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(intent);
         }
     } // CrimeHolder
