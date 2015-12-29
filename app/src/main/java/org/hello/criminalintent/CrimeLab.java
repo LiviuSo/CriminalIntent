@@ -25,12 +25,12 @@ public class CrimeLab {
         mCrimes = new ArrayList<>();
 
         // generate crimes
-        for(int i=0; i<100; i++) {
-            Crime crime = new Crime();
-            crime.setTitle("Crime # " + i);
-            crime.setSolved(i%2 == 0);
-            mCrimes.add(crime);
-        }
+//        for(int i=0; i<100; i++) {
+//            Crime crime = new Crime();
+//            crime.setTitle("Crime # " + i);
+//            crime.setSolved(i%2 == 0);
+//            mCrimes.add(crime);
+//        }
     }
 
     public List<Crime> getCrimes() {
@@ -62,4 +62,7 @@ public class CrimeLab {
         return -1;
     }
 
+    public void addCrime(Crime c) {
+        mCrimes.add(c);
+    }
 } // CrimeLab
