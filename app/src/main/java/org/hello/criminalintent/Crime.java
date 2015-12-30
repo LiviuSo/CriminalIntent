@@ -3,21 +3,21 @@ package org.hello.criminalintent;
 import java.util.Date;
 import java.util.UUID;
 
-/**
- * Created by lsoco_user on 12/22/2015.
- */
 public class Crime {
+
     private UUID mId;
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
 
     public Crime() {
-        // generate a unique identifier
-        mId = UUID.randomUUID();
-        mDate = new Date();
+        this(UUID.randomUUID());
     }
 
+    public Crime(UUID id) {
+        mId = id;
+        mDate = new Date();
+    }
     public UUID getId() {
         return mId;
     }
@@ -26,23 +26,23 @@ public class Crime {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
+    public void setTitle(String title) {
+        mTitle = title;
     }
 
     public Date getDate() {
         return mDate;
     }
 
-    public void setDate(Date mDate) {
-        this.mDate = mDate;
+    public void setDate(Date date) {
+        mDate = date;
     }
 
     public boolean isSolved() {
         return mSolved;
     }
 
-    public void setSolved(boolean mSolved) {
-        this.mSolved = mSolved;
+    public void setSolved(boolean solved) {
+        mSolved = solved;
     }
-} // end class Crime
+}

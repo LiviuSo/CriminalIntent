@@ -14,20 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
 import java.util.List;
 
-/**
- * Created by lsoco_user on 12/24/2015.
- */
 public class CrimeListFragment extends Fragment {
+
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
-    private RecyclerView mCrimeRecycleView;
+
+    private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
-
-    // challenge: Efficient RecycleView reloading
-    private int mCrimeIndex;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,14 +32,15 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
 
-        mCrimeRecycleView = (RecyclerView)view.findViewById(R.id.crime_recycler_view);
-        mCrimeRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if(savedInstanceState != null) {
+        mCrimeRecyclerView = (RecyclerView) view
+                .findViewById(R.id.crime_recycler_view);
+        mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        if (savedInstanceState != null) {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
         }
 
@@ -66,10 +63,11 @@ public class CrimeListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater); // not required, but recommended
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
+
         MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
-        if(mSubtitleVisible) {
+        if (mSubtitleVisible) {
             subtitleItem.setTitle(R.string.hide_subtitle);
         } else {
             subtitleItem.setTitle(R.string.show_subtitle);
@@ -80,12 +78,11 @@ public class CrimeListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_new_crime:
-                // create a new crime
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
+                Intent intent = CrimePagerActivity
+                        .newIntent(getActivity(), crime.getId());
                 startActivity(intent);
-            // launch a CrimePagerFragment
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
@@ -101,41 +98,46 @@ public class CrimeListFragment extends Fragment {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         int crimeCount = crimeLab.getCrimes().size();
         String subtitle = getString(R.string.subtitle_format, crimeCount);
-        if(!mSubtitleVisible) {
+
+        if (!mSubtitleVisible) {
             subtitle = null;
         }
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
     private void updateUI() {
-//        CrimeLab crimeLab = CrimeLab.get(getActivity());
-//        List<Crime> crimes = crimeLab.getCrimes();
-        if(mAdapter == null) {
-            mAdapter = new CrimeAdapter(CrimeLab.get(getActivity()).getCrimes());
-            mCrimeRecycleView.setAdapter(mAdapter);
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        List<Crime> crimes = crimeLab.getCrimes();
+
+        if (mAdapter == null) {
+            mAdapter = new CrimeAdapter(crimes);
+            mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
-            // challenge: Efficient RecycleView reloading
-            if(mCrimeIndex != -1) {
-                mAdapter.notifyItemChanged(mCrimeIndex);
-            }
+            mAdapter.setCrimes(crimes);
+            mAdapter.notifyDataSetChanged();
         }
+
         updateSubtitle();
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder
-                            implements View.OnClickListener {
+    private class CrimeHolder extends RecyclerView.ViewHolder 
+            implements View.OnClickListener {
+
         private TextView mTitleTextView;
         private TextView mDateTextView;
         private CheckBox mSolvedCheckBox;
+
         private Crime mCrime;
 
         public CrimeHolder(View itemView) {
             super(itemView);
-            mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_crime_title_text_view);
-            mDateTextView = (TextView)itemView.findViewById(R.id.list_item_crim_date_text_view);
-            mSolvedCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_crime_solved_check_box);
             itemView.setOnClickListener(this);
+
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
+            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
+            mSolvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
         }
 
         public void bindCrime(Crime crime) {
@@ -147,21 +149,13 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            // challenge: Efficient RecycleView reloading
-            mCrimeIndex = CrimeLab.getIndex(mCrime); // find the clicked item
             Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(intent);
         }
-    } // CrimeHolder
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if(requestCode == REQUEST_CRIME) {
-//            // handle result
-//        }
-//    }
+    }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
+
         private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes) {
@@ -185,7 +179,9 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount() {
             return mCrimes.size();
         }
-    } // CrimeAdapter
 
-
-} // CrimeListFragment
+        public void setCrimes(List<Crime> crimes) {
+            mCrimes = crimes;
+        }
+    }
+}
